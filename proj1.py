@@ -1,20 +1,25 @@
 import requests
+import sys
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 
-token = "BQBSAkwdCTrHkHkI-BXVkuPCo81ktPhSNhLlYF3Bx03laQV9d0sd11DTnP4lD6ZTvC2sT6Yde6jQt9ccb8woq7IlhYwilryqgPdDj2dCInAFp10aqcHGMkHWZ4Pp_KHqxt6Yqnmu_gQ"
+if len(sys.argv) < 1:
+    print("Please input a valid url")
+    sys.exit()
 
-id = "3Z7onAknzpinUu3KtmgeZb?si=f1d98XYWT3aUadCfkI8krQ"
+url_Artist = 
 
-url = f"https://api.spotify.com/v1/artists/{id}"
+print(f"Name: {data_artist['name']}")
 
-headers = {
-  "Authorization": f"Bearer {token}"
-}
+sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+artist = sp.artist(token)
+response = sp.artist_top_tracks(url_Artist)
 
-response = requests.get(url, headers=headers)
+for track in response['tracks']:
+    print(track['name'])
 
-data = response.json()
 
-print(data)
+
 
 
 
