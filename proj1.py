@@ -1,10 +1,16 @@
 import requests
+import sys
 import sqlalchemy as db
 import pandas as pd
 
-token = "BQD_FbxCYtfnOeBB4rFbZBgmiYzLmRevrLoN7w-uPyNCvuaOkHopVGLMWZBM51UULVeN7KmLrl3C0Bvwo6uZptlUzvax7bO3mSgJBy2X2Oz7YEVCj2qynPL4_XWFz0VQvSZJV43_cEQ"
+# print msg and exit if input is wrong
+if len(sys.argv) != 3:
+    print("Invalid. Please follow the format:\n")
+    print("python script.py <token> <spotify_artist_id>")
+    sys.exit(1)
 
-id = "3Z7onAknzpinUu3KtmgeZb?si=f1d98XYWT3aUadCfkI8krQ"
+token = sys.argv[1]
+id = sys.argv[2]
 
 url = f"https://api.spotify.com/v1/artists/{id}/top-tracks"
 
