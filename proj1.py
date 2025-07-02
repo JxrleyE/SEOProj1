@@ -17,9 +17,3 @@ print(artist['name'], ': Here are his top tracks')
 
 for track in response['tracks']:
     print(track['name'])
-
-
-
-
-
-
