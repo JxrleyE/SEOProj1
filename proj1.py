@@ -47,7 +47,6 @@ def callback():
     auth_manager.get_access_token(request.args['code'])  # Get the access token after user has logged in
     return redirect(url_for('home'))
 
-
 # Home page
 @app.route('/home')
 def home():
@@ -62,8 +61,52 @@ def home():
 
     ##CALL HOME TEMPLATE
 
-    return user_info
-       
+    return redirect(url_for('top_artists'))  
+
+# Top tracks page
+@app.route('/top_tracks')
+def top_tracks():
+    # If user isnt logged in send them to Spotify login page
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        auth_url = auth_manager.get_authorize_url() 
+        return redirect(auth_url) # Redirect to login 
+    
+    # Get the user's top tracks
+    sp_top_tracks = sp.current_user_top_tracks(limit=48, time_range='medium_term')
+
+    # Extract track names and artists
+    top_tracks_list = []
+    for item in sp_top_tracks['items']:
+        track_info = {
+            'name': item['name'],
+            'artists': ', '.join(artist['name'] for artist in item['artists']),
+            'album': item['album']['name'],
+            'url': item['external_urls']['spotify']
+        }
+        top_tracks_list.append(track_info)
+
+# Top artits page
+@app.route('/top_artists')
+def top_artists():
+     # If user isnt logged in send them to Spotify login page
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        auth_url = auth_manager.get_authorize_url() 
+        return redirect(auth_url) # Redirect to login 
+    
+    # Get the user's top albums
+    sp_top_albums = sp.current_user_top_artists(limit=48, time_range='medium_term')
+
+    # Extract top artists
+    top_artists_list = []
+    for item in sp_top_albums['items']:
+        artist_info = {
+            'name': item['name'],
+            'genres': ', '.join(item['genres']),
+            'url': item['external_urls']['spotify']
+        }
+        top_artists_list.append(artist_info)
+    
+    return top_artists_list
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
