@@ -1,19 +1,35 @@
 import requests
 import sys
+import os
+
 import spotipy
+from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.cache_handler import FlaskSessionCacheHandler
 
-if len(sys.argv) < 1:
-    print("Please input a valid url")
-    sys.exit()
+from dotenv import load_dotenv
 
-url_Artist = sys.argv[1]
+from flask import Flask, session
 
-sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
-artist = sp.artist(url_Artist)
-response = sp.artist_top_tracks(url_Artist)
 
-print(artist['name'], ': Here are his top tracks')
+load_dotenv() # loads in environment variables from .env file
 
-for track in response['tracks']:
-    print(track['name'])
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') # get secret key from .env file
+
+redirect_url = 'https://www.example.com/callback' # same URL entered in spotify deve app settings
+scope = "user-library-read, user-top-read" # what data we want to read from users spotify
+
+cache_handler = FlaskSessionCacheHandler(session) # Flask session cache handler to store access tokens
+
+# Initialize Spotify client with OAuth (This allows us to access user data)
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id = os.getenv('SPOTIPY_CLIENT_ID'),
+                                               client_secret = os.getenv('SPOTIPY_CLIENT_SECRET'),
+                                               redirect_uri = redirect_url,
+                                               scope = scope,
+                                               cache_handler = cache_handler,
+                                               swhow_dialog = True,)
+                                               )
+
+if __name__ == '__main__':
+    app.run(debug=True)
